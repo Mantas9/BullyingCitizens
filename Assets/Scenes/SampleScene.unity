@@ -169,7 +169,7 @@ MonoBehaviour:
   head: {fileID: 2083888274}
   camSensitivity: 1
   defaultFov: 60
-  sprintFov: 120
+  sprintFov: 90
   zoomMultiplier: 1.2
   zoomDuration: 0.01
 --- !u!54 &32255330
@@ -183,10 +183,10 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!136 &32255331
 CapsuleCollider:
@@ -1047,6 +1047,8 @@ GameObject:
   m_Component:
   - component: {fileID: 624910420601062535}
   - component: {fileID: 544856574128500963}
+  - component: {fileID: 624910420601062536}
+  - component: {fileID: 624910420601062537}
   m_Layer: 0
   m_Name: Fist
   m_TagString: Untagged
@@ -1092,6 +1094,34 @@ Transform:
   m_Father: {fileID: 2083888274}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 2.4, y: 182.33, z: -44.33}
+--- !u!114 &624910420601062536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281457504497278525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f7cc7dbee0e0814893db949f87f4ed2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  height: 0.2
+  speed: 5
+  randomize: 1
+--- !u!65 &624910420601062537
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281457504497278525}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.7, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &932894973247919959
 Transform:
   m_ObjectHideFlags: 0

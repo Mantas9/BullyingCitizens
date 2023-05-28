@@ -64,7 +64,7 @@ public class Movement : MonoBehaviour
     private void FixedUpdate()
     {
         var ray = new Ray(transform.position, Vector3.down);
-        isGrounded = Physics.Raycast(ray, out var hit, 1.2f);
+        isGrounded = Physics.Raycast(ray, out var hit, 1.3f);
         normal = hit.normal;
 
         if (normal == Vector3.zero)
