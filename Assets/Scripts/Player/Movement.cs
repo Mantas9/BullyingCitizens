@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using JetBrains.Annotations;
 
 public class Movement : MonoBehaviour
 {
@@ -7,15 +8,22 @@ public class Movement : MonoBehaviour
     private Rigidbody rb;
 
     // Movement
+    [Header("Movement")]
     private float moveSpeed; // speed variable
     // Speed variations (will be applied to moveSpeed when necessary)
     public float walkSpeed = 5;
+    private Vector3 velocity;
+    // Sprinting
+    [Header("Sprinting")]
     public float sprintSpeed = 15;
     public bool sprintUnlocked = false;
     public float maxSprintTime = 2;
-    private Vector3 velocity;
+    private float timeSprinting = 0;
+    public float sprintRecoveryTime = 5;
+    private float timeRecoveringSprint = 0;
 
     // Jump/Gravity
+    [Header("Jumping")]
     public float jumpStrength = 10;
     public float gravity = 30;
     public float jumpTryTime;
@@ -25,12 +33,14 @@ public class Movement : MonoBehaviour
     private bool wannaJump;
 
     // Camera
+    [Header("Camera")]
     public Transform head;
     private Camera cam;
     public float camSensitivity = 0.2f;
     private float horizontalAngle;
     private float verticalAngle;
     // Camera Zoom
+    [Header("Cam Zoom")]
     [Range(10, 160)]
     public float defaultFov = 60;
     [Range(10, 160)]
@@ -94,21 +104,39 @@ public class Movement : MonoBehaviour
 
     private void Sprinting()
     {
+        if (cam.fieldOfView != defaultFov)
+            ZoomCamera(defaultFov);
+
+
         if (!sprintUnlocked)
-            return;
+        {
+            timeRecoveringSprint += Time.deltaTime;
+
+            if (timeRecoveringSprint < sprintRecoveryTime)
+                return;
+
+            timeRecoveringSprint = 0;
+            sprintUnlocked = true;
+        }
+
 
         if (Input.GetKey(KeyCode.LeftShift))
         {
             moveSpeed = sprintSpeed;
             ZoomCamera(sprintFov);
-        }
-        else if (cam.fieldOfView != defaultFov)
-        {
-            ZoomCamera(defaultFov);
+
+            timeSprinting += Time.deltaTime;
         }
         else
         {
             moveSpeed = walkSpeed;
+        }
+
+        if (timeSprinting > maxSprintTime)
+        {
+            moveSpeed = walkSpeed;
+            timeSprinting = 0;
+            sprintUnlocked = false;
         }
 
     }
@@ -147,5 +175,12 @@ public class Movement : MonoBehaviour
 
         if (isGrounded)
             velocity.y = input.y;
+    }
+
+    public void UpgradeStats(float sprintingSpeed = 0, float sprintingEndurance = 0, float sprintingRecoveryTime = 0)
+    {
+        sprintSpeed += sprintingSpeed;
+        maxSprintTime += sprintingEndurance;
+        sprintRecoveryTime -= sprintingRecoveryTime;
     }
 }
