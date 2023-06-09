@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using JetBrains.Annotations;
 
 public class Movement : MonoBehaviour
 {
@@ -17,10 +16,14 @@ public class Movement : MonoBehaviour
     [Header("Sprinting")]
     public float sprintSpeed = 15;
     public bool sprintUnlocked = false;
+    public bool sprinting = false;
     public float maxSprintTime = 2;
-    private float timeSprinting = 0;
-    public float sprintRecoveryTime = 5;
-    private float timeRecoveringSprint = 0;
+    public float timeSprintingRemaining = 0;
+    // Recovery
+    public bool recovering = false;
+    [Range(0, 2)] public float recoveryStrength = 0.5f;
+    public float timeUntilRecoveryStarts = 5;
+    public float timerUntilSprintRecover = 0;
 
     // Jump/Gravity
     [Header("Jumping")]
@@ -54,6 +57,7 @@ public class Movement : MonoBehaviour
         cam = Camera.main;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        timeSprintingRemaining = maxSprintTime;
     }
 
     private void Update()
@@ -108,37 +112,62 @@ public class Movement : MonoBehaviour
             ZoomCamera(defaultFov);
 
 
-        if (!sprintUnlocked)
-        {
-            timeRecoveringSprint += Time.deltaTime;
-
-            if (timeRecoveringSprint < sprintRecoveryTime)
-                return;
-
-            timeRecoveringSprint = 0;
-            sprintUnlocked = true;
-        }
-
-
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && sprintUnlocked)
         {
             moveSpeed = sprintSpeed;
             ZoomCamera(sprintFov);
 
-            timeSprinting += Time.deltaTime;
+            timeSprintingRemaining -= Time.deltaTime;
+            sprinting = true;
+            recovering = false;
+            timerUntilSprintRecover = 0;
         }
         else
         {
             moveSpeed = walkSpeed;
+            sprinting = false;
         }
 
-        if (timeSprinting > maxSprintTime)
+        if (timeSprintingRemaining < 0 && sprinting)
         {
             moveSpeed = walkSpeed;
-            timeSprinting = 0;
+            timeSprintingRemaining = 0;
+            timerUntilSprintRecover = 0;
             sprintUnlocked = false;
+            sprinting = false;
         }
 
+        if (timeSprintingRemaining < maxSprintTime && !sprinting)
+        {
+            SprintRecovery();
+        }
+    }
+
+    private void SprintRecovery()
+    {
+        if (timerUntilSprintRecover < timeUntilRecoveryStarts && !recovering)
+        {
+            timerUntilSprintRecover += Time.deltaTime;
+            sprintUnlocked = false;
+
+            if (timerUntilSprintRecover >= timeUntilRecoveryStarts)
+            {
+                recovering = true;
+                timerUntilSprintRecover = 0;
+            }
+        }
+
+        if (recovering)
+        {
+            timeSprintingRemaining = Mathf.Lerp(timeSprintingRemaining, maxSprintTime, Time.deltaTime * recoveryStrength);
+            sprintUnlocked = true;
+
+            if (timeSprintingRemaining >= maxSprintTime - 0.05f)
+            {
+                timeSprintingRemaining = maxSprintTime;
+                recovering = false;
+            }
+        }
     }
 
     private void Gravity()
@@ -181,6 +210,6 @@ public class Movement : MonoBehaviour
     {
         sprintSpeed += sprintingSpeed;
         maxSprintTime += sprintingEndurance;
-        sprintRecoveryTime -= sprintingRecoveryTime;
+        timeUntilRecoveryStarts -= sprintingRecoveryTime;
     }
 }

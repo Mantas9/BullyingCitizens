@@ -7,7 +7,6 @@ TagManager:
   - Ground
   - CollectableRat
   - Fist
-  - Slappable
   - EnemyEye
   - Enemy
   layers:

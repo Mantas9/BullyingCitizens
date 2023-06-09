@@ -16,6 +16,6 @@ public class SprintingStats : MonoBehaviour
 
     private void Update()
     {
-        text.text = $"Sprinting:\r\n  Sprint Speed - {player.sprintSpeed}\r\n  Endurance - {player.maxSprintTime}s\r\n  Recovery Time - {player.sprintRecoveryTime}s";
+        text.text = $"Sprinting:\r\n  Sprint Speed - {player.sprintSpeed}\r\n  Endurance - {player.maxSprintTime}s\r\n  Recovery Time - {player.timeUntilRecoveryStarts}s";
     }
 }

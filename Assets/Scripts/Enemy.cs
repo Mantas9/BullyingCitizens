@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 using DitzeGames.Effects;
+using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
@@ -13,8 +14,12 @@ public class Enemy : MonoBehaviour
     public Transform target;
     public Health health;
     //private GameManager manager;
+
+    [Header("Effects")]
     public ParticleSystem deathParticles;
     public ParticleSystem hitParticles;
+    public GameObject bloodPuddle;
+    public LayerMask puddleMask;
 
     // Drops
     [Header("Drops")]
@@ -28,9 +33,8 @@ public class Enemy : MonoBehaviour
 
     [Header("Recovery")]
     public bool punched = false;
-    public float minRecoveryTime = 2f; // Max time to recover from slap
-    public float maxRecoveryTime = 10f; // Max time to recover from slap
-    private float recoveryTime;
+    public Vector2 recoveryTime = new Vector2(2, 10);
+    private float currentRecoveryTime;
     private float recovering = 0f;
 
     [Header("Seeking")]
@@ -64,7 +68,7 @@ public class Enemy : MonoBehaviour
             animator.SetBool("Dead", false);
         }
 
-        if (recovering >= recoveryTime && punched)
+        if (recovering >= currentRecoveryTime && punched)
             punched = false;
 
         if (punched)
@@ -87,30 +91,44 @@ public class Enemy : MonoBehaviour
 
     public void NewRecoveryTime()
     {
-        recoveryTime = Random.Range(minRecoveryTime, maxRecoveryTime);
+        currentRecoveryTime = Random.Range(recoveryTime.x, recoveryTime.y);
     }
 
     public void Die()
     {
         dead = true;
+
+        // Blood puddle
+        StartCoroutine(SpawnBloodPuddle());
+
         agent.enabled = false;
-        rb.constraints = RigidbodyConstraints.None;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+        //GetComponent<Collider>().isTrigger = true;
+        Physics.IgnoreCollision(GetComponent<Collider>(), target.GetComponentInChildren<Collider>());
         animator.enabled = false;
 
         deathParticles.Play();
 
         //if (deathSound != null)
-            //SoundManager.PlaySound(deathSound, Random.Range(-8, 8));
+        //SoundManager.PlaySound(deathSound, Random.Range(-8, 8));
 
         if (Random.Range(0, 100) <= dropChance)
             Instantiate(dropPrefab, transform.position, Quaternion.identity);
 
         //if (!gameEnd)
-            //manager.onKill.Invoke();
+        //manager.onKill.Invoke();
 
     }
 
+    private IEnumerator SpawnBloodPuddle()
+    {
+        yield return new WaitForSeconds(2f);
+        //print("Spawned");
 
+        var ray = new Ray(deathParticles.transform.position, Vector3.down);
+        if (Physics.Raycast(ray, out var hit, 100, puddleMask))
+            Instantiate(bloodPuddle, hit.point + new Vector3(0, 0.01f, 0), bloodPuddle.transform.rotation);
+    }
 
     private void FindTarget()
     {
@@ -145,27 +163,23 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.CompareTag("Player") && !dead)
+        if (collision.gameObject.CompareTag("Player") && !dead) // Damage to player
         {
-            collision.gameObject.GetComponent<Health>().Damage(damage);
+            //print(collision.name);
+            collision.transform.parent.GetComponent<Health>().Damage(damage);
             CameraEffects.ShakeOnce(0.2f, 100);
         }
 
-        
-    }
-
-    private void OnTriggerEnter(Collider collision)
-    {
-        if (collision.gameObject.CompareTag("Fist"))
+        if (collision.gameObject.CompareTag("Fist") && !punched) // Damage from player
         {
-            print("Hit");
+            //print("Hit");
 
             CameraEffects.ShakeOnce(0.2f, 100);
 
             hitParticles.Play();
-            
+
 
             punched = true;
             var puncher = collision.gameObject.GetComponentInChildren<Puncher>();
