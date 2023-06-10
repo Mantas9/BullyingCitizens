@@ -34,6 +34,7 @@ public class Movement : MonoBehaviour
     public Vector3 normal;
     public bool isGrounded;
     private bool wannaJump;
+    public LayerMask mask;
 
     // Camera
     [Header("Camera")]
@@ -78,7 +79,7 @@ public class Movement : MonoBehaviour
     private void FixedUpdate()
     {
         var ray = new Ray(transform.position, Vector3.down);
-        isGrounded = Physics.Raycast(ray, out var hit, 1.3f);
+        isGrounded = Physics.Raycast(ray, out var hit, 1.3f, mask);
         normal = hit.normal;
 
         if (normal == Vector3.zero)
@@ -91,12 +92,6 @@ public class Movement : MonoBehaviour
         rb.velocity = velocity;
     }
 
-    private void ZoomCamera(float target)
-    {
-        float angle = Mathf.Abs((defaultFov / zoomMultiplier) - defaultFov);
-        cam.fieldOfView = Mathf.MoveTowards(cam.fieldOfView, target, angle / zoomDuration * Time.deltaTime);
-    }
-
     private void Jumping()
     {
         if (wannaJump && isGrounded)
@@ -104,6 +99,11 @@ public class Movement : MonoBehaviour
             velocity.y = jumpStrength;
             wannaJump = false;
         }
+    }
+    private void Gravity()
+    {
+        if (!isGrounded)
+            velocity.y -= gravity * Time.deltaTime;
     }
 
     private void Sprinting()
@@ -148,7 +148,7 @@ public class Movement : MonoBehaviour
         if (timerUntilSprintRecover < timeUntilRecoveryStarts && !recovering)
         {
             timerUntilSprintRecover += Time.deltaTime;
-            sprintUnlocked = false;
+            //sprintUnlocked = false;
 
             if (timerUntilSprintRecover >= timeUntilRecoveryStarts)
             {
@@ -170,11 +170,6 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void Gravity()
-    {
-        if (!isGrounded)
-            velocity.y -= gravity * Time.deltaTime;
-    }
 
     private void Rotation()
     {
@@ -206,10 +201,9 @@ public class Movement : MonoBehaviour
             velocity.y = input.y;
     }
 
-    public void UpgradeStats(float sprintingSpeed = 0, float sprintingEndurance = 0, float sprintingRecoveryTime = 0)
+    private void ZoomCamera(float target)
     {
-        sprintSpeed += sprintingSpeed;
-        maxSprintTime += sprintingEndurance;
-        timeUntilRecoveryStarts -= sprintingRecoveryTime;
+        float angle = Mathf.Abs((defaultFov / zoomMultiplier) - defaultFov);
+        cam.fieldOfView = Mathf.MoveTowards(cam.fieldOfView, target, angle / zoomDuration * Time.deltaTime);
     }
 }

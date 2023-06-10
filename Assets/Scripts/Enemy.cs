@@ -18,16 +18,19 @@ public class Enemy : MonoBehaviour
     [Header("Effects")]
     public ParticleSystem deathParticles;
     public ParticleSystem hitParticles;
+    public ParticleSystem ratKillParticles;
     public GameObject bloodPuddle;
     public LayerMask puddleMask;
 
     // Drops
     [Header("Drops")]
+    public bool dropAllowed = true;
     [Range(0, 100)] public float dropChance = 50f;
     public GameObject dropPrefab;
 
     [Header("Life/Death")]
     public bool dead = false;
+    public bool ratKill = false;
     public float damage = 20;
     public AudioClip deathSound;
 
@@ -94,30 +97,36 @@ public class Enemy : MonoBehaviour
         currentRecoveryTime = Random.Range(recoveryTime.x, recoveryTime.y);
     }
 
-    public void Die()
+    public IEnumerator Die()
     {
+        if (dead)
+            yield break;
+
         dead = true;
 
-        // Blood puddle
-        StartCoroutine(SpawnBloodPuddle());
+        // Death Effect
+        deathParticles.Play();
+        StartCoroutine(SpawnBloodPuddle()); // Blood puddle
+        if (ratKill)
+        {
+            ratKillParticles.Play();
+
+            yield return new WaitForSeconds(1f);
+
+            ratKillParticles.Stop();
+        }
 
         agent.enabled = false;
         rb.constraints = RigidbodyConstraints.FreezeAll;
-        //GetComponent<Collider>().isTrigger = true;
         Physics.IgnoreCollision(GetComponent<Collider>(), target.GetComponentInChildren<Collider>());
         animator.enabled = false;
 
-        deathParticles.Play();
+        // Killed enemy event
+        GameManager.instance.enemyKilledEvent.Invoke();
 
-        //if (deathSound != null)
-        //SoundManager.PlaySound(deathSound, Random.Range(-8, 8));
-
-        if (Random.Range(0, 100) <= dropChance)
+        // Drops
+        if (Random.Range(0, 100) <= dropChance && dropAllowed)
             Instantiate(dropPrefab, transform.position, Quaternion.identity);
-
-        //if (!gameEnd)
-        //manager.onKill.Invoke();
-
     }
 
     private IEnumerator SpawnBloodPuddle()

@@ -1,3 +1,4 @@
+using DitzeGames.Effects;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,6 +48,14 @@ public class Puncher : MonoBehaviour
             punching = true;
             canPunch = false;
             cooldown = punchCooldown;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(punching && other.CompareTag("EffectOnHit")) // Implement fully
+        {
+            CameraEffects.ShakeOnce(0.2f, 100);
         }
     }
 }

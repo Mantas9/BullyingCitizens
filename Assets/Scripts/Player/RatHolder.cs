@@ -8,7 +8,11 @@ public class RatHolder : MonoBehaviour
 
     public Animator animator;
 
+    public int timesUsed = 0; // amount of times the ability was used
+
     public Vector2 activationGoal;
+    private int realActivationGoal;
+    public int sacrificesMade = 0;
 
     public bool hasRat = false;
     public bool ratFulfilled = false;
@@ -21,6 +25,12 @@ public class RatHolder : MonoBehaviour
             animator = GetComponent<Animator>();
     }
 
+    public void NewActivationGoal()
+    {
+        sacrificesMade = 0;
+        realActivationGoal = (int)Random.Range(activationGoal.x, activationGoal.y);
+    }
+
     private void Awake()
     {
         instance = this;
@@ -28,8 +38,15 @@ public class RatHolder : MonoBehaviour
 
     private void Update()
     {
+        if (sacrificesMade >= realActivationGoal && hasRat)
+            ActivateRat();
+
+        if (ratFulfilled && Input.GetKeyDown(KeyCode.R))
+            StartCoroutine(UseRat());
+
         animator.SetBool("HasRat", hasRat);
         animator.SetBool("RatActive", ratFulfilled);
+        animator.SetBool("UseRat", useRat);
     }
 
     public void ActivateRat()
@@ -46,18 +63,29 @@ public class RatHolder : MonoBehaviour
             return;
 
         hasRat = true;
-        
+
+        NewActivationGoal();
     }
 
-    public void UseRat()
+    public IEnumerator UseRat()
     {
+        timesUsed++;
+
         useRat = true;
+        ratFulfilled = false;
+        hasRat = false;
 
-        animator.SetBool("UseRat", useRat);
-    }
+        yield return new WaitForSeconds(1f);
 
-    private void LateUpdate()
-    {
+        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var enemy in enemies)
+        {
+            var enemyScript = enemy.GetComponent<Enemy>();
+            enemyScript.dropAllowed = false;
+            enemyScript.ratKill = true;
+            enemyScript.StartCoroutine(enemyScript.Die());
+        }
+
         useRat = false;
     }
 }

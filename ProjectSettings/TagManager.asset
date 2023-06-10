@@ -7,8 +7,10 @@ TagManager:
   - Ground
   - CollectableRat
   - Fist
-  - EnemyEye
   - Enemy
+  - BoxingBag
+  - AvoidPunchPoint
+  - EffectOnHit
   layers:
   - Default
   - TransparentFX
@@ -18,8 +20,8 @@ TagManager:
   - UI
   - Ground
   - Player
-  - 
-  - 
+  - BoxingBag
+  - PunchingPoints
   - 
   - 
   - 

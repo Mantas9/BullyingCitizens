@@ -75,7 +75,7 @@ public class Health : MonoBehaviour
     private void Die()
     {
         if (TryGetComponent(out Enemy enemy) && !enemy.dead)
-            enemy.Die();
+            enemy.StartCoroutine(enemy.Die());
 
         if (transform.gameObject.CompareTag("Player"))
             Destroy(transform.gameObject);
