@@ -18,6 +18,7 @@ public class EnergyBar : MonoBehaviour
 
     private void Update()
     {
+        slider.maxValue = movement.maxSprintTime;
         slider.value = movement.timeSprintingRemaining;
     }
 }

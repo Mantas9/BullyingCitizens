@@ -23,16 +23,18 @@ public class Spawner : MonoBehaviour
 {
     public static List<Enemy> enemies = new();
 
-    public GameObject prefab;
-
     public List<Wave> waves;
     public int currentWave = 0;
+
+    public bool spawning = false;
 
     public IEnumerator WaveRoutine()
     {
         // Start wave
+        spawning = true;
         yield return StartCoroutine(SpawnRoutine());
         currentWave++;
+        spawning = false;
     }
 
     private IEnumerator SpawnRoutine()
@@ -52,12 +54,12 @@ public class Spawner : MonoBehaviour
         {
             var prefab = enemiesToSpawn[0];
 
-            if (waves[currentWave].random)
+            if (waves[currentWave].random && enemiesToSpawn.Count != 1)
                 prefab = enemiesToSpawn[Random.Range(0, enemiesToSpawn.Count)];
 
             enemiesToSpawn.Remove(prefab);
             Instantiate(prefab, transform.position, Quaternion.identity);
-
+            
             yield return new WaitForSeconds(waves[currentWave].interval);
         }
     }

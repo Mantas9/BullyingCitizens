@@ -44,12 +44,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f4021ce03c3b4488f9af303ad5bb80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
   waves:
   - random: 1
-    interval: 5
+    interval: 2
     entries:
-    - number: 10
+    - number: 5
       enemy: {fileID: 8598023505071783995, guid: bd7cf96a8ce0906448c4c2e71ac972a8,
         type: 3}
+  - random: 1
+    interval: 2
+    entries:
+    - number: 15
+      enemy: {fileID: 8598023505071783995, guid: bd7cf96a8ce0906448c4c2e71ac972a8,
+        type: 3}
+    - number: 5
+      enemy: {fileID: 6782306996053001030, guid: eb521335dc411794f9f26e63d7e833ed,
+        type: 3}
+  - random: 1
+    interval: 0.3
+    entries:
+    - number: 50
+      enemy: {fileID: 7046309059598129633, guid: ca30c52190ebda944aca0ed856354d6f,
+        type: 3}
+  - random: 1
+    interval: 2
+    entries:
+    - number: 15
+      enemy: {fileID: 8598023505071783995, guid: bd7cf96a8ce0906448c4c2e71ac972a8,
+        type: 3}
+    - number: 15
+      enemy: {fileID: 6782306996053001030, guid: eb521335dc411794f9f26e63d7e833ed,
+        type: 3}
+    - number: 20
+      enemy: {fileID: 7046309059598129633, guid: ca30c52190ebda944aca0ed856354d6f,
+        type: 3}
+  - random: 1
+    interval: 1
+    entries:
+    - number: 25
+      enemy: {fileID: 8598023505071783995, guid: bd7cf96a8ce0906448c4c2e71ac972a8,
+        type: 3}
+    - number: 20
+      enemy: {fileID: 6782306996053001030, guid: eb521335dc411794f9f26e63d7e833ed,
+        type: 3}
+    - number: 25
+      enemy: {fileID: 7046309059598129633, guid: ca30c52190ebda944aca0ed856354d6f,
+        type: 3}
+    - number: 5
+      enemy: {fileID: 7542774874646326861, guid: cf8bd87bea2ad1f43b52a8b63ebdfe66,
+        type: 3}
+    - number: 1
+      enemy: {fileID: 4892331398387056659, guid: e31db9805a769344484c699ff6d522ff,
+        type: 3}
   currentWave: 0
+  spawning: 0

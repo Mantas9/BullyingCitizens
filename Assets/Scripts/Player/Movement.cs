@@ -1,10 +1,16 @@
 using UnityEngine;
 using System;
+using System.Collections;
+using Random = UnityEngine.Random;
 
 public class Movement : MonoBehaviour
 {
     // Components
     private Rigidbody rb;
+
+    // Sound
+    public AudioSource footStepSource;
+    public float stepInterval = 0.25f;
 
     // Movement
     [Header("Movement")]
@@ -12,6 +18,7 @@ public class Movement : MonoBehaviour
     // Speed variations (will be applied to moveSpeed when necessary)
     public float walkSpeed = 5;
     private Vector3 velocity;
+    private bool walking = false;
     // Sprinting
     [Header("Sprinting")]
     public float sprintSpeed = 15;
@@ -59,6 +66,14 @@ public class Movement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         timeSprintingRemaining = maxSprintTime;
+
+        InvokeRepeating("RandomiseFootstep", 0, footStepSource.clip.length);
+    }
+
+    private void RandomiseFootstep()
+    {
+        footStepSource.volume = Random.Range(0.75f, 1);
+        footStepSource.pitch = Random.Range(-0.8f, 1.2f);
     }
 
     private void Update()
@@ -74,6 +89,11 @@ public class Movement : MonoBehaviour
 
         if (Time.time > jumpTryTime + forgiveness)
             wannaJump = false;
+
+        if (walking)
+            footStepSource.enabled = true;
+        else
+            footStepSource.enabled = false;
     }
 
     private void FixedUpdate()
@@ -196,6 +216,11 @@ public class Movement : MonoBehaviour
 
         velocity.x = input.x;
         velocity.z = input.z;
+
+        if(velocity.x != 0 || velocity.z != 0)
+            walking = true;
+        else
+            walking = false;
 
         if (isGrounded)
             velocity.y = input.y;

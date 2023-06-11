@@ -16,6 +16,6 @@ public class EnergyText : MonoBehaviour
 
     private void Update()
     {
-        text.text = movement.timeSprintingRemaining.ToString("0.00") + "s/" + movement.maxSprintTime.ToString() + "s";
+        text.text = movement.timeSprintingRemaining.ToString("0.00") + "s/" + movement.maxSprintTime.ToString("0.00") + "s";
     }
 }

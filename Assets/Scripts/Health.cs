@@ -78,7 +78,7 @@ public class Health : MonoBehaviour
             enemy.StartCoroutine(enemy.Die());
 
         if (transform.gameObject.CompareTag("Player"))
-            Destroy(transform.gameObject);
+            Application.Quit();
     }
 
     public void Damage(float damage)

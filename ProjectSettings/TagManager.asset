@@ -10,7 +10,7 @@ TagManager:
   - Enemy
   - BoxingBag
   - AvoidPunchPoint
-  - EffectOnHit
+  - BoxingTrap
   layers:
   - Default
   - TransparentFX
@@ -22,7 +22,7 @@ TagManager:
   - Player
   - BoxingBag
   - PunchingPoints
-  - 
+  - IgnoreInterractions
   - 
   - 
   - 

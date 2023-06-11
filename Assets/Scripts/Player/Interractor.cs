@@ -44,9 +44,9 @@ public class Interractor : MonoBehaviour
             }
         }
 
-        if(other.gameObject.CompareTag("BoxingBag"))
+        if(other.gameObject.CompareTag("BoxingBag") && GameManager.instance.trainingSessionStarted)
         {
-            if (other.transform.GetComponent<PunchSpeedGame>().minigameInProgress)
+            if (other.transform.GetComponent<PunchingGames>().minigameInProgress)
                 return;
 
             showBoxingUI = true;
@@ -54,13 +54,15 @@ public class Interractor : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) // Power/damage minigame
             {
                 showBoxingUI = false;
+                var powerGame = other.GetComponent<PunchingGames>();
+                powerGame.StartPowerMinigame();
             }
             else if(Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) // Speed minigame
             {
                 showBoxingUI = false;
 
-                var speedGame = other.GetComponent<PunchSpeedGame>();
-                speedGame.StartMiniGame();
+                var speedGame = other.GetComponent<PunchingGames>();
+                speedGame.StartSpeedMiniGame();
             }
         }
     }

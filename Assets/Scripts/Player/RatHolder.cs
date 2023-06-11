@@ -7,6 +7,9 @@ public class RatHolder : MonoBehaviour
     public static RatHolder instance;
 
     public Animator animator;
+    public AudioSource source;
+    public AudioClip activateRatClip;
+    public AudioClip useRatClip;
 
     public int timesUsed = 0; // amount of times the ability was used
 
@@ -54,6 +57,8 @@ public class RatHolder : MonoBehaviour
         if(ratFulfilled || !hasRat)
             return;
 
+        source.PlayOneShot(activateRatClip);
+
         ratFulfilled = true;
     }
 
@@ -69,7 +74,12 @@ public class RatHolder : MonoBehaviour
 
     public IEnumerator UseRat()
     {
+        if (useRat == true)
+            yield break;
+
         timesUsed++;
+
+        source.PlayOneShot(useRatClip, 1);
 
         useRat = true;
         ratFulfilled = false;

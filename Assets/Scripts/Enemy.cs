@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 using DitzeGames.Effects;
 using System.Collections;
+using TMPro;
 
 public class Enemy : MonoBehaviour
 {
@@ -22,6 +23,14 @@ public class Enemy : MonoBehaviour
     public GameObject bloodPuddle;
     public LayerMask puddleMask;
 
+    // Sounds
+    [Header("Sounds")]
+    private AudioSource source;
+    public AudioClip hitSound;
+    public AudioClip recoverSound;
+    private bool recovered = true;
+    public AudioClip deathSound;
+
     // Drops
     [Header("Drops")]
     public bool dropAllowed = true;
@@ -32,7 +41,6 @@ public class Enemy : MonoBehaviour
     public bool dead = false;
     public bool ratKill = false;
     public float damage = 20;
-    public AudioClip deathSound;
 
     [Header("Recovery")]
     public bool punched = false;
@@ -48,7 +56,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        //manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        source = GetComponentInChildren<AudioSource>();
         health = GetComponent<Health>();
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -72,7 +80,12 @@ public class Enemy : MonoBehaviour
         }
 
         if (recovering >= currentRecoveryTime && punched)
+        {
+            var pos = transform.position;
+            pos.y = 0;
+            transform.position = pos;
             punched = false;
+        }
 
         if (punched)
         {
@@ -84,6 +97,12 @@ public class Enemy : MonoBehaviour
         else
         {
             animator.SetBool("Punched", false);
+            if(!recovered)
+            {
+                recovered = true;
+                source.PlayOneShot(recoverSound);
+            }
+
             agent.enabled = true;
             rb.constraints = RigidbodyConstraints.FreezeAll;
             recovering = 0;
@@ -107,6 +126,12 @@ public class Enemy : MonoBehaviour
         // Death Effect
         deathParticles.Play();
         StartCoroutine(SpawnBloodPuddle()); // Blood puddle
+        source.Stop();
+
+        //yield return null;
+        //source.PlayOneShot(deathSound, 20);
+
+
         if (ratKill)
         {
             ratKillParticles.Play();
@@ -123,6 +148,12 @@ public class Enemy : MonoBehaviour
 
         // Killed enemy event
         GameManager.instance.enemyKilledEvent.Invoke();
+
+        // StarterEnemy
+        if(GetComponentInChildren<TextMeshPro>().TryGetComponent<StarterEnemy>(out var starterEnemy))
+        {
+            GameManager.instance.ToggleGymDoor();
+        }
 
         // Drops
         if (Random.Range(0, 100) <= dropChance && dropAllowed)
@@ -191,6 +222,7 @@ public class Enemy : MonoBehaviour
 
 
             punched = true;
+            recovered = false;
             var puncher = collision.gameObject.GetComponentInChildren<Puncher>();
 
             health.Damage(puncher.damage);
@@ -201,6 +233,8 @@ public class Enemy : MonoBehaviour
 
             rb.AddForce(collision.transform.up * force + transform.right * force, ForceMode.Impulse);
             rb.MoveRotation(Quaternion.Euler(Random.Range(-180, 180), Random.Range(-180, 180), Random.Range(-180, 180)));
+
+            source.PlayOneShot(hitSound);
         }
     }
 }
