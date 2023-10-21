@@ -803,7 +803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   punchCooldownDecreaseMargin: 0.05
   punchKnockbackPowerIncreaseMargin: 0.05
-  punchDamageIncreaseMargin: 5
+  punchDamageIncreaseMargin: 10
   sprintSpeedIncreaseMargin: 0.5
   sprintEnduranceIncreaseMargin: 0.1
   sprintRecoveryTimeDecreaseMargin: 0.1
