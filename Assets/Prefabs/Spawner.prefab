@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5600776663809888523}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 69.06, y: 0.64, z: 59.61}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5600776663809888522
 MonoBehaviour:
@@ -63,7 +63,7 @@ MonoBehaviour:
   - random: 1
     interval: 0.3
     entries:
-    - number: 50
+    - number: 10
       enemy: {fileID: 7046309059598129633, guid: ca30c52190ebda944aca0ed856354d6f,
         type: 3}
   - random: 1
@@ -75,7 +75,7 @@ MonoBehaviour:
     - number: 15
       enemy: {fileID: 6782306996053001030, guid: eb521335dc411794f9f26e63d7e833ed,
         type: 3}
-    - number: 20
+    - number: 10
       enemy: {fileID: 7046309059598129633, guid: ca30c52190ebda944aca0ed856354d6f,
         type: 3}
   - random: 1
